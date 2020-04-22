@@ -12,21 +12,17 @@ class PreProcessingTestCase(unittest.TestCase):
         self.data = np.loadtxt('/home/fotis/dev_projects/PD_Completion_MF/data.mat',skiprows=5)
         self.I0 = self.I0.astype('int')
         self.J0 = self.J0.astype('int')
+        self.M = np.loadtxt('/home/fotis/dev_projects/PD_Completion_MF/M.mat',skiprows=5)
         self.I0 -= 1
         self.J0 -= 1 
         self.pd = PenaltyDecomposition()
 
     def test_correctness(self):
-        tau = 0
-        l = -np.inf
-        u = np.inf
-        k = 800
-        eps = 1e-5
-        maxit = np.inf        
-        X, rx, iters = self.pd.PD_completion(self.data, self.I0, self.J0, tau, l, u, k , eps, maxit)
-        loss = np.linalg.norm(X-M)/np.linalg.norm(M)
-        self.assertEqual(loss, 2.1438029193860132e-05,
+        X, rx, iters = self.pd.fit_transform(self.data, self.I0, self.J0)
+        loss = np.linalg.norm(X-self.M)/np.linalg.norm(self.M)
+        self.assertLessEqual(loss-2.1438029193860132e-05,1e-6,
                          'Incorrect loss')
+        self.assertEqual(rx,5,'Incorrect rank')
 
 if __name__ == '__main__':
     unittest.main()
