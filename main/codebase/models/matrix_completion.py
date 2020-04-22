@@ -191,7 +191,11 @@ class PenaltyDecomposition():
         k = data.shape[0]
         X, rx, iters = self.PD_completion(data,I0,J0,self.tau,self.l,self.u,k,self.eps,self.maxit)
         return X, rx, iters
-        
+   def fit_transform(self, data, I0, J0):
+       k = data.shape[0]
+       X, rx, iters = self.PD_completion(data,I0,J0,self.tau,self.l,self.u,k,self.eps,self.maxit)
+       return X, rx, iters
+
     def __init__(self,tau=0, l=-np.inf, u=np.inf, eps=1e-5, maxit=np.inf):
         self.tau = tau
         self.l = l
