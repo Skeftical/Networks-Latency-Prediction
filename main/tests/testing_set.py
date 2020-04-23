@@ -17,9 +17,9 @@ class EvaluatorSetTest(unittest.TestCase):
                             'Minimum provided index is {}'.format(x))
 
     def test_missing_value_correctness(self):
-        ratio = np.array([np.isnan(m)/m.size for m in self.ts.test_set_missing])
-        ratio = np.logical_and(ratio>=(0.5-1e-5), ratio<=(0.5+1e5))
-        self.assertEqual(np.sum(ratio), 100, 'Ratios {}'.format(ratio))
+        ratio = np.array([np.isnan(m).sum()/m.size for m in self.ts.test_set_missing])
+        ratio_b = np.logical_and(ratio>=(0.5-1e-1), ratio<=(0.5+1e1))
+        self.assertEqual(np.sum(ratio_b), 100, 'Ratios {}'.format(ratio))
 
 if __name__ == '__main__':
     unittest.main()
