@@ -135,7 +135,7 @@ class PenaltyDecomposition():
             best_obj = np.inf
             while True:
                 # Solve Y
-                Y = proj(X,M,I,J,l,u,tau,k)
+                Y = self.proj(X,M,I,J,l,u,tau,k)
                 #Solve X
                 U,d,V = svd(Y,full_matrices=False) #SVD in numpy returns d as a vector whereas in MATLAB d is Matrix
                 L = (d**2 > 2/rho)
@@ -191,7 +191,7 @@ class PenaltyDecomposition():
         k = data.shape[0]
         X, rx, iters = self.PD_completion(data,I0,J0,self.tau,self.l,self.u,k,self.eps,self.maxit)
         return X, rx, iters
-   def fit_transform(self, data, I0, J0):
+    def fit_transform(self, data, I0, J0):
        k = data.shape[0]
        X, rx, iters = self.PD_completion(data,I0,J0,self.tau,self.l,self.u,k,self.eps,self.maxit)
        return X, rx, iters
