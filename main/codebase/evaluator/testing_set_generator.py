@@ -39,8 +39,8 @@ class TestingSetGenerator():
             self.matrices.append(m)
 
     def initialize_test_set(self):
-        if lags is not None:
-            start = lags
+        if self.lags is not None:
+            start = self.lags
         test_set = [m for m in self.get_matrix(start,self.test_set_size)]
         self.test_set, self.test_set_indices = [m[0] for m in test_set], [m[1] for m in test_set]
         self.test_set_missing = list(map(lambda X: missing_values(X,self.missing_value_ratio),self.test_set))
