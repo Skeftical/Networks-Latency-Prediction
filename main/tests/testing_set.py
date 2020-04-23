@@ -12,12 +12,14 @@ class EvaluatorSetTest(unittest.TestCase):
         self.assertEqual(len(self.ts.test_set_indices),100)
 
     def test_lags(self):
-        self.assertTrue(np.min(self.ts.test_set_missing)>self.ts.lags)
+        x = np.min(self.ts.test_set_indices)
+        self.assertTrue(x>self.ts.lags,
+                            'Minimum provided index is {}'.format(x))
 
     def test_missing_value_correctness(self):
         ratio = np.array([np.isnan(m)/m.size for m in self.ts.test_set_missing])
         ratio = np.logical_and(ratio>=(0.5-1e-5), ratio<=(0.5+1e5))
-        self.assertEqual(np.sum(ratio), 100)
+        self.assertEqual(np.sum(ratio), 100, 'Ratios {}'.format(ratio))
 
 if __name__ == '__main__':
     unittest.main()
