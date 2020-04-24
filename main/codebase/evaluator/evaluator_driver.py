@@ -1,5 +1,5 @@
 import numpy as np
-from testing_set_generator import TestingSetGenerator
+from .testing_set_generator import TestingSetGenerator
 from main.codebase.models.euclidean import Vivaldi
 from main.codebase.models.matrix_completion import SimpleMF
 import argparse
@@ -23,5 +23,5 @@ if args.verbosity:
 if not os.path.exists('output/Accuracy'):
         logger.info('creating directory Accuracy')
         os.makedirs('output/Accuracy')
-
+print(args.test_size,args.missing_value_ratio)
 ts = TestingSetGenerator(missing_value_ratio=0.3, test_set_size=5)

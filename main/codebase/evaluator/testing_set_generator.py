@@ -39,6 +39,7 @@ class TestingSetGenerator():
             self.matrices.append(m)
 
     def initialize_test_set(self):
+        start = 0 
         if self.lags is not None:
             start = self.lags
         test_set = [m for m in self.get_matrix(start,self.test_set_size)]
