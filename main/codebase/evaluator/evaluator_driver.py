@@ -1,7 +1,8 @@
 import numpy as np
-from main.codebase.evaluator.test_set_generator import TestingSetGenerator
+from testing_set_generator import TestingSetGenerator
 import argparse
 import logging
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--verbose", dest='verbosity', help="increase output verbosity",
@@ -11,6 +12,7 @@ parser.add_argument("--all",dest="test_all_models", action="store_true", help="T
 
 args = parser.parse_args()
 
+logger = logging.getLogger('main')
 if args.verbosity:
    print("verbosity turned on")
    handler = logging.StreamHandler(sys.stdout)
