@@ -2,6 +2,7 @@ import numpy as np
 from .testing_set_generator import TestingSetGenerator
 from main.codebase.models.euclidean import Vivaldi
 from main.codebase.models.matrix_completion import SimpleMF, PenaltyDecomposition
+from main.codebase.models.networks3d import Networks3D
 import argparse
 import logging
 import os
@@ -53,6 +54,7 @@ models = {}
 models['SimpleMF'] = SimpleMF
 models['Vivaldi'] = Vivaldi
 models['PenaltyDecomposition'] = PenaltyDecomposition
+models['Networks3D'] = Networks3D
 eval_df = {}
 logger.info("Beginning evaluation on models :\n {}".format('\t'.join(models.keys())))
 for ix in ts.test_set_indices:
