@@ -17,7 +17,7 @@ class Vivaldi():
     def predict(self):
         return pairwise_distances(self.X, metric='l2')
 
-    def compute_error(self):
+    def compute_error(self, M):
         X = self.predict()
         return np.linalg.norm(X-M,'fro')/np.linalg.norm(M,'fro')
 
@@ -32,7 +32,7 @@ class Vivaldi():
                         e = M[i,j]- np.linalg.norm(self.X[i,:]-self.X[j,:])
                         F+= e*self._unit(self.X[i,:]-self.X[j,:])
                     self.X[i,:]+=self.gamma*F
-            losses.append(self.compute_error())
+            losses.append(self.compute_error(M))
         self.losses = losses
 
     def __init__(self,d=2,gamma=0.01, iters=100):

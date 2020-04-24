@@ -1,10 +1,13 @@
 import numpy as np
 from .testing_set_generator import TestingSetGenerator
 from main.codebase.models.euclidean import Vivaldi
-from main.codebase.models.matrix_completion import SimpleMF
+from main.codebase.models.matrix_completion import SimpleMF, PenaltyDecomposition
 import argparse
 import logging
 import os
+import sys
+import pandas as pd
+from datetime import datetime
 np.random.seed(5)
 parser = argparse.ArgumentParser()
 parser.add_argument("--verbose", "-v", dest='verbosity', help="increase output verbosity",
@@ -14,15 +17,23 @@ parser.add_argument("test_size", help="Size of test set to evaluate models on", 
 parser.add_argument("missing_value_ratio", help='Ratio of missing values in matrices',type=float)
 args = parser.parse_args()
 
-logger = logging.getLogger('main')
-if args.verbosity:
-   print("verbosity turned on")
-   handler = logging.StreamHandler(sys.stdout)
-   handler.setLevel(logging.DEBUG)
-   logger.addHandler(handler)
+logFormatter = logging.Formatter("[%(asctime)s] [%(levelname)-5.5s]  %(message)s")
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+logPath = 'output/logs'
 if not os.path.exists('output/Accuracy'):
         logger.info('creating directory Accuracy')
         os.makedirs('output/Accuracy')
+if not os.path.exists('output/logs'):
+        os.makedirs('output/logs')
+if args.verbosity:
+   print("verbosity turned on")
+#   fileHandler = logging.FileHandler("{0}/eval-run{1}.log".format(logPath, datetime.now().isoformat()))
+#   fileHandler.setFormatter(logFormatter)
+#   logger.addHandler(fileHandler)
+   handler = logging.StreamHandler(sys.stdout)
+   handler.setFormatter(logFormatter)
+   logger.addHandler(handler)
 logger.info("Loading Testing Set Generator")
 ts = TestingSetGenerator(missing_value_ratio=args.missing_value_ratio, test_set_size=args.test_size)
 
@@ -31,8 +42,9 @@ def get_true_results(M, M_true):
     y_test = y_test[y_test.nonzero()]
     return y_test
 
-def get_results(M, M_hat):
+def get_results(M, M_true, M_hat):
     y_hat = M_hat[np.isnan(M)]
+    y_test = M_true[np.isnan(M)]
     y_hat = y_hat[y_test.nonzero()] #zero values crash relative error calculation
     return y_hat
 
@@ -40,6 +52,7 @@ def get_results(M, M_hat):
 models = {}
 models['SimpleMF'] = SimpleMF
 models['Vivaldi'] = Vivaldi
+models['PenaltyDecomposition'] = PenaltyDecomposition
 eval_df = {}
 logger.info("Beginning evaluation on models :\n {}".format('\t'.join(models.keys())))
 for ix in ts.test_set_indices:
@@ -54,8 +67,11 @@ for ix in ts.test_set_indices:
         model.fit(M)
         M_hat = model.predict()
         if model_label in eval_df:
-            eval_df[model_label] = np.concatenate([eval_df[model_label], get_results(M, M_hat)])
+            eval_df[model_label] = np.concatenate([eval_df[model_label], get_results(M, M_true, M_hat)])
         else:
-            eval_df[model_label] = get_results(M, M_hat)
+            eval_df[model_label] = get_results(M, M_true, M_hat)
     break;
+
+eval_df = pd.DataFrame(eval_df)
+eval_df.to_csv('output/Accuracy/evaluation_run_{}.csv'.format(datetime.now().isoformat()))
 print(eval_df)

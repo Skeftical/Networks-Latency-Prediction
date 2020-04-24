@@ -185,12 +185,14 @@ class PenaltyDecomposition():
         rX = matrix_rank(X)
         return X, rX, iters
 
-    def fit_transform(self, M):
+    def fit(self, M):
         I0,J0 = (~np.isnan(M)).nonzero()
         data = M[~np.isnan(M)]
         k = data.shape[0]
-        X, rx, iters = self.PD_completion(data,I0,J0,self.tau,self.l,self.u,k,self.eps,self.maxit)
-        return X, rx, iters
+        self.X, self.rx, self.iters = self.PD_completion(data,I0,J0,self.tau,self.l,self.u,k,self.eps,self.maxit)
+    def predict(self):
+       return self.X    
+
     def fit_transform(self, data, I0, J0):
        k = data.shape[0]
        X, rx, iters = self.PD_completion(data,I0,J0,self.tau,self.l,self.u,k,self.eps,self.maxit)
