@@ -57,9 +57,10 @@ models['PenaltyDecomposition'] = PenaltyDecomposition
 models['Networks3D'] = Networks3D
 eval_df = {}
 logger.info("Beginning evaluation on models :\n {}".format('\t'.join(models.keys())))
-for ix in ts.test_set_indices:
-    M = ts.test_set_missing[ix]
-    M_true = ts.test_set[ix]
+for i in range(len(ts.test_set)):
+    ix = ts.test_set_indices[i]
+    M = ts.test_set_missing[i]
+    M_true = ts.test_set[i]
     if 'true' in eval_df:
         eval_df['true'] = np.concatenate([eval_df['true'], get_true_results(M, M_true)])
     else:
@@ -72,7 +73,6 @@ for ix in ts.test_set_indices:
             eval_df[model_label] = np.concatenate([eval_df[model_label], get_results(M, M_true, M_hat)])
         else:
             eval_df[model_label] = get_results(M, M_true, M_hat)
-    break;
 
 eval_df = pd.DataFrame(eval_df)
 eval_df.to_csv('output/Accuracy/evaluation_run_{}.csv'.format(datetime.now().isoformat()))

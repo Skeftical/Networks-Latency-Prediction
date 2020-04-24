@@ -35,7 +35,7 @@ class Vivaldi():
             losses.append(self.compute_error(M))
         self.losses = losses
 
-    def __init__(self,d=2,gamma=0.01, iters=100):
+    def __init__(self,d=3,gamma=0.01, iters=100):
         self.X = None
         self.d = d
         self.gamma = gamma

@@ -13,6 +13,7 @@ def missing_values(X,missing_value_ratio=0.3):
     sample = np.random.uniform(size=(X.shape))
     sample[sample<=missing_value_ratio] = np.nan
     X_missing = X*(sample*0+1)
+    X_missing[np.diag_indices(X_missing.shape[0])] = 0
     return X_missing
 
 
@@ -36,6 +37,8 @@ class TestingSetGenerator():
         for i in range(1,689):
             f = "SeattleData_{}".format(i)
             m = np.loadtxt('/home/fotis/DATA/NETWORKS/MATRIX/NetLatency-Data-master/Seattle/{}'.format(f),delimiter='\t')
+            
+
             self.matrices.append(m)
 
     def initialize_test_set(self):
