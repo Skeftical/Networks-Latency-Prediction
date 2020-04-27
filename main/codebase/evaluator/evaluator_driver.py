@@ -3,6 +3,7 @@ from .testing_set_generator import TestingSetGenerator
 from main.codebase.models.euclidean import Vivaldi
 from main.codebase.models.matrix_completion import SimpleMF, PenaltyDecomposition
 from main.codebase.models.networks3d import Networks3D
+from .config import *
 import argparse
 import logging
 import os
@@ -66,7 +67,10 @@ for i in range(len(ts.test_set)):
     else:
         eval_df['true'] = get_true_results(M, M_true)
     for model_label in models:
-        model = models[model_label]()
+        if model_label in parameters:
+            model = models[model_label](**parameters[model_label])
+        else:
+            model = models[model_label]()
         model.fit(M)
         M_hat = model.predict()
         if model_label in eval_df:
@@ -77,3 +81,5 @@ for i in range(len(ts.test_set)):
 eval_df = pd.DataFrame(eval_df)
 eval_df.to_csv('output/Accuracy/evaluation_run_{}.csv'.format(datetime.now().isoformat()))
 print(eval_df)
+for k,v in parameters.items():
+    logger.info("Model {}\n Parameters:\n {}".format(k,'\n'.join(['{}\t{}'.format(label,val) for label, val in v.items()])))

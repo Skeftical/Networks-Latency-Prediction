@@ -28,7 +28,7 @@ class SimpleMF():
                 losses.append(loss)
 
         self.losses = losses
-    def __init__(self,iterations=10,lambda_f=0.5, lambda_x=0.5, rank=10, gamma=0.01):
+    def __init__(self,iterations=10,lambda_f=0.5, lambda_x=0.5, rank=10, gamma=0.01, **kwargs):
         self.k = rank
         self.iterations = iterations
         self.gamma = gamma
@@ -37,6 +37,8 @@ class SimpleMF():
         self.lambda_f = lambda_f
         self.lambda_x = lambda_x
         self.losses = None
+        for k,v in kwargs.items():
+            setattr(self, k, v)
 
 class PenaltyDecomposition():
     def proj(self,A,M,I,J,l,u,tau,k):
@@ -191,16 +193,18 @@ class PenaltyDecomposition():
         k = data.shape[0]
         self.X, self.rx, self.iters = self.PD_completion(data,I0,J0,self.tau,self.l,self.u,k,self.eps,self.maxit)
     def predict(self):
-       return self.X    
+       return self.X
 
     def fit_transform(self, data, I0, J0):
        k = data.shape[0]
        X, rx, iters = self.PD_completion(data,I0,J0,self.tau,self.l,self.u,k,self.eps,self.maxit)
        return X, rx, iters
 
-    def __init__(self,tau=0, l=-np.inf, u=np.inf, eps=1e-5, maxit=np.inf):
+    def __init__(self, tau=10, l=0.001, u=1, eps=1e-3, maxit=np.inf, **kwargs):
         self.tau = tau
         self.l = l
         self.u = u
         self.eps = eps
         self.maxit = maxit
+        for k,v in kwargs.items():
+            setattr(self, k, v)        

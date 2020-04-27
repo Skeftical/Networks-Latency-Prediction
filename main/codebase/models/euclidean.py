@@ -35,9 +35,11 @@ class Vivaldi():
             losses.append(self.compute_error(M))
         self.losses = losses
 
-    def __init__(self,d=3,gamma=0.01, iters=100):
+    def __init__(self,d=3,gamma=0.01, iters=100, **kwargs):
         self.X = None
         self.d = d
         self.gamma = gamma
         self.iters = iters
         self.losses = None
+        for k,v in kwargs.items():
+            setattr(self, k, v)
