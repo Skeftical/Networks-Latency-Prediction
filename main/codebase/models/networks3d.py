@@ -70,7 +70,7 @@ class Networks3DAlg2():
                     Dk_hats[i] = self.vivaldi.predict()
                 for i,Dk_hat in enumerate(Dk_hats):
                     Fks[i] = matrices[i]/Dk_hat
-                    Fks[i] = np.where(Fks[i]==np.inf,matrices[i],Fks[i])
+                    Fks[i] = np.where(Fks[i]==np.inf,1,Fks[i])
                 frame_stacked = np.concatenate(Fks)
                 print("Finished embedding process")
                 #### MF process
