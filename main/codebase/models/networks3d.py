@@ -75,7 +75,7 @@ class Networks3DAlg2():
                 #### MF process
                 self.pd.fit(frame_stacked)
                 frame_stacked_hat = self.pd.predict()
-                for t in range(0,frame_stacked_hat[0],shape[0]):
+                for t in range(0,frame_stacked_hat.shape[0],shape[0]):
                     Fk_hat = frame_stacked_hat[t:t+shape[0],:]
                     assert(Fk_hat.shape==shape)
                     Dks[t//shape[0]] = matrices[t//shape[0]]/Fk_hat
