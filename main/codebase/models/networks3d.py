@@ -57,7 +57,7 @@ class Networks3DAlg2():
             return (theta_a, theta_b)
 
         def __procedure2(self, matrices, ix):
-            shape = matrices[0]
+            shape = matrices[0].shape
             Dks = [m for m in matrices]
             Dk_hats = [None for _ in range(len(matrices))]
             Fk_hats = [None for _ in range(len(matrices))]
