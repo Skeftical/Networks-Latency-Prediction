@@ -71,6 +71,7 @@ class Networks3DAlg2():
                 for i,Dk_hat in enumerate(Dk_hats):
                     Fks[i] = matrices[i]/Dk_hat
                 frame_stacked = np.concatenate(Fks)
+                print("Finished embedding process")
                 #### MF process
                 self.pd.fit(frame_stacked)
                 frame_stacked_hat = self.pd.predict()
@@ -78,6 +79,8 @@ class Networks3DAlg2():
                     Fk_hat = frame_stacked_hat[t:t+shape[0],:]
                     assert(Fk_hat.shape==shape)
                     Dks[t//shape[0]] = matrices[t//shape[0]]/Fk_hat
+                print("Finished MF process")
+
             Dk_hat = Dk_hats[ix]
             Fk_hat = Fk_hats[ix]
             return np.multiply(Dk_hat, Fk_hat)
@@ -109,7 +112,7 @@ class Networks3DAlg2():
         def predict(self):
             return self.Mhat
 
-        def __init__(self,max_iter=3, d_vivaldi=3, gamma_vivaldi=0.01, iters_vivaldi=200,
+        def __init__(self,max_iter=3, d_vivaldi=3, gamma_vivaldi=0.01, iters_vivaldi=50,
                         tau=10, l=0.001, u=1, eps=1e-3, maxit=np.inf):
                 # 10,0.001,1,1e-3,inf obtained from paper experiments
                 self.vivaldi = Vivaldi(d_vivaldi, gamma_vivaldi, iters_vivaldi)
