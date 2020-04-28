@@ -62,7 +62,8 @@ class Networks3DAlg2():
             Dk_hats = [None for _ in range(len(matrices))]
             Fk_hats = [None for _ in range(len(matrices))]
             Fks = [None for _ in range(len(matrices))]
-            for _ in range(self.max_iter):
+            for ITER in range(self.max_iter):
+                print("Iter : {}/{}".format(ITER, self.max_iter))
                 #### embedding process
                 for i,Dk in enumerate(Dks):
                     self.vivaldi.fit(Dk)
@@ -91,12 +92,14 @@ class Networks3DAlg2():
             '''
             shape = matrices[0].shape
             #Procedure 1
+            print("Beginning process 1")
             Omega = self.__get_column_stacked(matrices)
             theta_a, theta_b = self.__get_missing_thetas(Omega, shape)
             self.pd.fit(Omega)
             Omega_hat = self.pd.predict()
             M_c_hat = Omega_hat[:,ix].reshape(shape)
             #Procedure 2
+            print("Beginning process 2")
             M_c_hat_proc2 = self.__procedure2(matrices, ix)
             Mhat = np.zeros(shape)
             Mhat[theta_a] = M_c_hat[theta_a]

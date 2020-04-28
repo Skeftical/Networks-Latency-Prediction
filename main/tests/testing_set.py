@@ -13,7 +13,7 @@ class EvaluatorSetTest(unittest.TestCase):
 
     def test_lags(self):
         x = np.min(self.ts.test_set_indices)
-        self.assertTrue(x>self.ts.lags,
+        self.assertTrue(x>=self.ts.lags,
                             'Minimum provided index is {}'.format(x))
 
     def test_missing_value_correctness(self):

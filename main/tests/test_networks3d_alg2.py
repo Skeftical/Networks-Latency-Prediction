@@ -9,7 +9,7 @@ class EvaluatorSetTest(unittest.TestCase):
         self.N3D2 = Networks3DAlg2()
 
     def test_fit(self):
-        self.N3D2.fit(ts.matrices,0)
+        self.N3D2.fit(ts.matrices_with_missing,0)
 
     def test_shape_of_mhat(self):
         self.assertEqual(self.N3D2.predict().shape,self.ts.matrices[0].shape)
