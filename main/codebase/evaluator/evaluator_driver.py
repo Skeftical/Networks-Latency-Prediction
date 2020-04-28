@@ -82,4 +82,4 @@ eval_df = pd.DataFrame(eval_df)
 eval_df.to_csv('output/Accuracy/evaluation_run_{}.csv'.format(datetime.now().isoformat()))
 print(eval_df)
 for k,v in parameters.items():
-    logger.info("Model {}\n Parameters:\n {}".format(k,'\n'.join(['{}\t{}'.format(label,val) for label, val in v.items()])))
+    logger.info("Model {}\nParameters:\n{}".format(k,'\n'.join(['{}\t{}'.format(label,val) for label, val in v.items()])))
