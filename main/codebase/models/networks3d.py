@@ -80,6 +80,7 @@ class Networks3DAlg2():
                     Fk_hat = frame_stacked_hat[t:t+shape[0],:]
                     assert(Fk_hat.shape==shape)
                     Dks[t//shape[0]] = matrices[t//shape[0]]/Fk_hat
+                    assert(np.sum(Dks[t//shape[0]]==np.inf)==0)
                 print("Finished MF process")
 
             Dk_hat = Dk_hats[ix]
