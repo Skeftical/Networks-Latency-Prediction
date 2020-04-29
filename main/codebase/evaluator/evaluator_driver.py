@@ -2,7 +2,7 @@ import numpy as np
 from .testing_set_generator import TestingSetGenerator
 from main.codebase.models.euclidean import Vivaldi
 from main.codebase.models.matrix_completion import SimpleMF, PenaltyDecomposition
-from main.codebase.models.networks3d import Networks3D
+from main.codebase.models.networks3d import Networks3D, Networks3DAlg2
 from .config import *
 import argparse
 import logging
@@ -56,6 +56,7 @@ models['SimpleMF'] = SimpleMF
 models['Vivaldi'] = Vivaldi
 models['PenaltyDecomposition'] = PenaltyDecomposition
 models['Networks3D'] = Networks3D
+models['Networks3DAlg2'] = Networks3DAlg2
 eval_df = {}
 logger.info("Beginning evaluation on models :\n {}".format('\t'.join(models.keys())))
 for i in range(len(ts.test_set)):
@@ -72,7 +73,7 @@ for i in range(len(ts.test_set)):
             model = models[model_label](**parameters[model_label])
         else:
             model = models[model_label]()
-        if model_label=='Networks3D':
+        if model_label=='Networks3DAlg2':
             model.fit(ts.matrices_with_missing,ix)
         else:
             model.fit(M)
