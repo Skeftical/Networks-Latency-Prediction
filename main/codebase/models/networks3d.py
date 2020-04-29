@@ -114,6 +114,7 @@ class Networks3DAlg2():
             Mhat = np.zeros(shape)
             Mhat[theta_a] = M_c_hat[theta_a]
             Mhat[theta_b] = M_c_hat_proc2[theta_b]
+            assert(np.sum(Mhat==0)!=Mhat.size)
             self.Mhat = Mhat
 
         def predict(self):
@@ -125,3 +126,4 @@ class Networks3DAlg2():
                 self.vivaldi = Vivaldi(d_vivaldi, gamma_vivaldi, iters_vivaldi)
                 self.pd = PenaltyDecomposition(tau, l, u, eps, maxit)
                 self.max_iter = max_iter
+                self.Mhat = None
