@@ -3,7 +3,7 @@ from .testing_set_generator import TestingSetGenerator
 from main.codebase.models.euclidean import Vivaldi
 from main.codebase.models.matrix_completion import SimpleMF, PenaltyDecomposition
 from main.codebase.models.networks3d import Networks3D
-from .config import *
+from config import *
 import argparse
 import logging
 import os
@@ -59,6 +59,7 @@ models['Networks3D'] = Networks3D
 eval_df = {}
 logger.info("Beginning evaluation on models :\n {}".format('\t'.join(models.keys())))
 for i in range(len(ts.test_set)):
+    logger.info("Run {}/{}".format(i+1, args.test_size))
     ix = ts.test_set_indices[i]
     M = ts.test_set_missing[i]
     M_true = ts.test_set[i]
@@ -71,7 +72,10 @@ for i in range(len(ts.test_set)):
             model = models[model_label](**parameters[model_label])
         else:
             model = models[model_label]()
-        model.fit(M)
+        if model_label=='Networks3D':
+            model.fit(ts.matrices_with_missing,ix)
+        else:
+            model.fit(M)
         M_hat = model.predict()
         if model_label in eval_df:
             eval_df[model_label] = np.concatenate([eval_df[model_label], get_results(M, M_true, M_hat)])

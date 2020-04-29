@@ -121,9 +121,11 @@ class Networks3DAlg2():
             return self.Mhat
 
         def __init__(self,max_iter=3, d_vivaldi=3, gamma_vivaldi=0.01, iters_vivaldi=50,
-                        tau=10, l=0.001, u=1, eps=1e-3, maxit=np.inf):
+                        tau=10, l=0.001, u=1, eps=1e-3, maxit=np.inf, **kwargs):
                 # 10,0.001,1,1e-3,inf obtained from paper experiments
                 self.vivaldi = Vivaldi(d_vivaldi, gamma_vivaldi, iters_vivaldi)
                 self.pd = PenaltyDecomposition(tau, l, u, eps, maxit)
                 self.max_iter = max_iter
                 self.Mhat = None
+                for k,v in kwargs.items():
+                    setattr(self, k, v)
