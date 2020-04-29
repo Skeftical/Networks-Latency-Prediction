@@ -3,7 +3,7 @@ from .testing_set_generator import TestingSetGenerator
 from main.codebase.models.euclidean import Vivaldi
 from main.codebase.models.matrix_completion import SimpleMF, PenaltyDecomposition
 from main.codebase.models.networks3d import Networks3D
-from config import *
+from .config import *
 import argparse
 import logging
 import os
