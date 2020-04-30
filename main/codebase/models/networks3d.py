@@ -56,7 +56,7 @@ class Networks3DAlg2():
             theta_a = self.__transform_to_masks(theta_a, shape)
             return (theta_a, theta_b)
 
-        def __procedure2(self, matrices, ix):
+        def __procedure2(self, matrices):
             shape = matrices[0].shape
             Dks = [m for m in matrices]
             Dk_hats = [None for _ in range(len(matrices))]
@@ -87,16 +87,16 @@ class Networks3DAlg2():
                     assert(np.sum(Dks[i]==np.inf)==0)
                 print("Finished MF process")
 
-            Dk_hat = Dk_hats[ix]
-            Fk_hat = Fk_hats[ix]
+            Dk_hat = Dk_hats[-1]
+            Fk_hat = Fk_hats[-1]
 
             return np.multiply(Dk_hat, Fk_hat)
 
-        def fit(self, matrices, ix):
+        def fit(self, matrices):
             '''
              args :
                 matrices : list
-                    A list of all matrices
+                    A list of all matrices up to current
                 ix : int
                     Index  of the current matrix
             '''
@@ -107,10 +107,10 @@ class Networks3DAlg2():
             theta_a, theta_b = self.__get_missing_thetas(Omega, shape)
             self.pd.fit(Omega)
             Omega_hat = self.pd.predict()
-            M_c_hat = Omega_hat[:,ix].reshape(shape)
+            M_c_hat = Omega_hat[:,-1].reshape(shape)
             #Procedure 2
             print("Beginning process 2")
-            M_c_hat_proc2 = self.__procedure2(matrices, ix)
+            M_c_hat_proc2 = self.__procedure2(matrices)
             Mhat = np.zeros(shape)
             Mhat[theta_a] = M_c_hat[theta_a]
             Mhat[theta_b] = M_c_hat_proc2[theta_b]

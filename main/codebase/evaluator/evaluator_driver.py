@@ -74,7 +74,7 @@ for i in range(len(ts.test_set)):
         else:
             model = models[model_label]()
         if model_label=='Networks3DAlg2':
-            model.fit(ts.matrices_with_missing,ix)
+            model.fit(ts.matrices_with_missing[:ix+1])
         else:
             model.fit(M)
         M_hat = model.predict()
