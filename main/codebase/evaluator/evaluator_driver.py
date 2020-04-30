@@ -31,9 +31,9 @@ if not os.path.exists('output/logs'):
         os.makedirs('output/logs')
 if args.verbosity:
    print("verbosity turned on")
-#   fileHandler = logging.FileHandler("{0}/eval-run{1}.log".format(logPath, datetime.now().isoformat()))
-#   fileHandler.setFormatter(logFormatter)
-#   logger.addHandler(fileHandler)
+  fileHandler = logging.FileHandler("{0}/eval-run{1}.log".format(logPath, datetime.now().isoformat()))
+  fileHandler.setFormatter(logFormatter)
+  logger.addHandler(fileHandler)
    handler = logging.StreamHandler(sys.stdout)
    handler.setFormatter(logFormatter)
    logger.addHandler(handler)
