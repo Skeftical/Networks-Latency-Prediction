@@ -9,7 +9,7 @@ class SES():
         args :
             y : vector with missing values
         '''
-        tvals = np.arange(1, y.size)
+        tvals = np.arange(1, y.size+1)
         mean = np.mean(y[~np.isnan(y)])
         # If the first or last elements are missing impute by mean
         if np.isnan(y[0]):
@@ -42,7 +42,7 @@ class SES():
             elif np.isnan(d).sum()>0:
                 d = self.__missing_value_imputation(d)
             m = SimpleExpSmoothing(d).fit(smoothing_level=self.smoothing_level,optimized=self.optimized)
-            y_hat = m.forecast(1)
+            y_hat = float(m.forecast(1))
             ys_predicted[i,j] = y_hat
 
         for i,j in impute_by_column:
