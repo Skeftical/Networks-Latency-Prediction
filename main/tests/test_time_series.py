@@ -1,6 +1,6 @@
 import unittest
 from main.codebase.evaluator.testing_set_generator import TestingSetGenerator
-from main.codebase.models.time_series import SES
+from main.codebase.models.time_series import SES, TSMF
 import numpy as np
 
 class EvaluatorSetTest(unittest.TestCase):
@@ -15,7 +15,7 @@ class EvaluatorSetTest(unittest.TestCase):
 
     def test_fit_tsmf(self):
         self.tsmf.fit(self.ts.matrices_with_missing, self.ts.test_set_indices[0])
-        self.assertEqual(self.ses.predict().shape,self.ts.matrices[0].shape)
+        self.assertEqual(self.tsmf.predict().shape,self.ts.matrices[0].shape)
 
     def test_initialize_values_with_dict(self):
         d = {'alpha':0.1, 'lags':10, 'smoothing_level':0.3, 'optimized':True,
