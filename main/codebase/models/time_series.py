@@ -2,6 +2,7 @@ import numpy as np
 from statsmodels.tsa.api import SimpleExpSmoothing
 from itertools import product
 from scipy.interpolate import interp1d
+from main.codebase.models.matrix_completion import SimpleMF
 class SES():
 
     def __missing_value_imputation(self, y):
@@ -61,3 +62,31 @@ class SES():
         self.Mhat = None
         for k,v in kwargs.items():
             setattr(self, k, v)
+
+class TSMF():
+
+    def fit(self, matrices, ix):
+        self.mf.fit(matrices[ix])
+        self.Mhat_MF = self.mf.predict()
+        self.ts.fit(matrices, ix)
+        self.Mhat_TS = self.ts.predict()
+    def predict(self):
+        return self.alpha*self.Mhat_MF + (1-self.alpha)*self.Mhat_TS
+
+    def __init__(self, alpha=0.5, lags=5, smoothing_level=0.2, optimized=False,
+                    iterations=10,lambda_f=0.5, lambda_x=0.5, rank=10, gamma=0.01, **kwargs):
+        self.alpha = alpha
+        self.lags = lags
+        self.smoothing_level = smoothing_level
+        self.optimized = optimized
+        self.iterations = iterations
+        self.lambda_f = lambda_f
+        self.lambda_x = lambda_x
+        self.rank = rank
+        self.gamma = gamma
+        for k,v in kwargs:
+            setattr(self, k, v)
+        self.mf = SimpleMF(iterations=self.iterations, lambda_f=self.lambda_f, lambda_x=self.lambda_x, rank=self.rank, gamma=0.01)
+        self.ts = SES(lags=self.lags,smoothing_level=self.smoothing_level, optimized=self.optimized)
+        self.Mhat_MF = None
+        self.Mhat_TS = None
