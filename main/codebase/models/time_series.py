@@ -17,7 +17,7 @@ class SES():
         if np.isnan(y[-1]):
             y[-1] = mean
         mask = ~np.isnan(y)
-        f  = interp1d(tvals[mask],yvals[mask], kind='linear') #Could optimize kind
+        f  = interp1d(tvals[mask],y[mask], kind='linear') #Could optimize kind
         return f(tvals)
 
     def fit(self, matrices, ix):
