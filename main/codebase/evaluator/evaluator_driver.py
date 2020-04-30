@@ -10,6 +10,7 @@ import os
 import sys
 import pandas as pd
 from datetime import datetime
+from time import time
 np.random.seed(5)
 parser = argparse.ArgumentParser()
 parser.add_argument("--verbose", "-v", dest='verbosity', help="increase output verbosity",
@@ -69,6 +70,7 @@ for i in range(len(ts.test_set)):
     else:
         eval_df['true'] = get_true_results(M, M_true)
     for model_label in models:
+        start = time()
         if model_label in parameters:
             model = models[model_label](**parameters[model_label])
         else:
@@ -78,6 +80,7 @@ for i in range(len(ts.test_set)):
         else:
             model.fit(M)
         M_hat = model.predict()
+        logger.info("Evaluation completed on {}, took {}s".format(model_label,time()-start))
         if model_label in eval_df:
             eval_df[model_label] = np.concatenate([eval_df[model_label], get_results(M, M_true, M_hat)])
         else:
