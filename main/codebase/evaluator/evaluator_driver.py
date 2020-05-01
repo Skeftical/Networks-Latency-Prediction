@@ -3,6 +3,7 @@ from .testing_set_generator import TestingSetGenerator
 from main.codebase.models.euclidean import Vivaldi
 from main.codebase.models.matrix_completion import SimpleMF, PenaltyDecomposition
 from main.codebase.models.networks3d import Networks3D, Networks3DAlg2
+from main.codebase.models.time_series import SES, TSMF
 from .config import *
 import argparse
 import logging
@@ -31,9 +32,9 @@ if not os.path.exists('output/logs'):
         os.makedirs('output/logs')
 if args.verbosity:
    print("verbosity turned on")
-  fileHandler = logging.FileHandler("{0}/eval-run{1}.log".format(logPath, datetime.now().isoformat()))
-  fileHandler.setFormatter(logFormatter)
-  logger.addHandler(fileHandler)
+   fileHandler = logging.FileHandler("{0}/eval-run{1}.log".format(logPath, datetime.now().isoformat()))
+   fileHandler.setFormatter(logFormatter)
+   logger.addHandler(fileHandler)
    handler = logging.StreamHandler(sys.stdout)
    handler.setFormatter(logFormatter)
    logger.addHandler(handler)
@@ -58,6 +59,8 @@ models['Vivaldi'] = Vivaldi
 models['PenaltyDecomposition'] = PenaltyDecomposition
 models['Networks3D'] = Networks3D
 models['Networks3DAlg2'] = Networks3DAlg2
+models['TSMF'] = TSMF
+models['SES'] = SES
 eval_df = {}
 logger.info("Beginning evaluation on models :\n {}".format('\t'.join(models.keys())))
 for i in range(len(ts.test_set)):
@@ -77,7 +80,7 @@ for i in range(len(ts.test_set)):
             model = models[model_label]()
         if model_label=='Networks3DAlg2':
             model.fit(ts.matrices_with_missing[:ix+1])
-        elif model_label=='TSMF':
+        elif model_label=='TSMF' or model_label=='SES':
             model.fit(ts.matrices_with_missing, ix)
         else:
             model.fit(M)
