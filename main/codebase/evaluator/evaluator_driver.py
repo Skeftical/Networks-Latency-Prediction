@@ -39,7 +39,7 @@ if args.verbosity:
    handler.setFormatter(logFormatter)
    logger.addHandler(handler)
 logger.info("Loading Testing Set Generator")
-ts = TestingSetGenerator(missing_value_ratio=args.missing_value_ratio, test_set_size=args.test_size)
+ts = TestingSetGenerator(missing_value_ratio=args.missing_value_ratio, test_set_size=args.test_size, lags=LAGS)
 
 def get_true_results(M, M_true):
     y_test = M_true[np.isnan(M)]
@@ -66,6 +66,7 @@ logger.info("Beginning evaluation on models :\n {}".format('\t'.join(models.keys
 for i in range(len(ts.test_set)):
     logger.info("Run {}/{}".format(i+1, args.test_size))
     ix = ts.test_set_indices[i]
+    logger.info("On matrix ID {}".format(ix))
     M = ts.test_set_missing[i]
     M_true = ts.test_set[i]
     if 'true' in eval_df:
