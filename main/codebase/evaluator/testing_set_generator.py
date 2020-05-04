@@ -37,8 +37,6 @@ class TestingSetGenerator():
         for i in range(1,689):
             f = "SeattleData_{}".format(i)
             m = np.loadtxt('/home/fotis/DATA/NETWORKS/MATRIX/NetLatency-Data-master/Seattle/{}'.format(f),delimiter='\t')
-
-
             self.matrices.append(m)
 
     def initialize_test_set(self):
@@ -50,7 +48,7 @@ class TestingSetGenerator():
         self.matrices_with_missing = list(map(lambda X: missing_values(X,self.missing_value_ratio),self.matrices))
         self.test_set_missing = [self.matrices_with_missing[i] for i in self.test_set_indices]
 
-    def __init__(self, choice='Seattle', missing_value_ratio=0.3, test_set_size=5, lags=None):
+    def __init__(self, choice='Seattle', missing_value_ratio=0.3, test_set_size=5, lags=None, hypertuning_set=None):
         '''
         args :
             choice : str
@@ -67,6 +65,7 @@ class TestingSetGenerator():
         self.missing_value_ratio = missing_value_ratio
         self.test_set_size = test_set_size
         self.lags = lags
+        self.hypertuning_set = hypertuning_set
         self.test_set = None
         self.test_set_missing = None
         self.matrices_with_missing = None
