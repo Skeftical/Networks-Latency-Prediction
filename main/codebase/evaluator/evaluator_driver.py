@@ -107,7 +107,7 @@ def eval_on_model(model_label, i):
 
 for model_label in models:
         mhats = Parallel(n_jobs=15,verbose=1)(delayed(eval_on_model)(model_label,i) for i in range(len(ts.test_set)))
-        for i in range(len(ts.test_set):
+        for i in range(len(ts.test_set)):
             M_true = ts.test_set[i]
             M = ts.test_set_missing[i]
             M_hat = mhats[i]
