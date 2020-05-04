@@ -12,6 +12,8 @@ import sys
 import pandas as pd
 from datetime import datetime
 from time import time
+from joblib import Parallel, delayed
+
 np.random.seed(5)
 parser = argparse.ArgumentParser()
 parser.add_argument("--verbose", "-v", dest='verbosity', help="increase output verbosity",
@@ -84,24 +86,34 @@ for i in range(len(ts.test_set)):
         eval_df['true'] = np.concatenate([eval_df['true'], get_true_results(M, M_true)])
     else:
         eval_df['true'] = get_true_results(M, M_true)
-    for model_label in models:
-        start = time()
-        if model_label in parameters:
-            model = models[model_label](**parameters[model_label])
-        else:
-            model = models[model_label]()
-        if model_label=='Networks3DAlg2':
-            model.fit(ts.matrices_with_missing[:ix+1])
-        elif model_label=='TSMF' or model_label=='SES':
-            model.fit(ts.matrices_with_missing, ix)
-        else:
-            model.fit(M)
-        M_hat = model.predict()
-        logger.info("Evaluation completed on {}, took {}s".format(model_label,time()-start))
-        if model_label in eval_df:
-            eval_df[model_label] = np.concatenate([eval_df[model_label], get_results(M, M_true, M_hat)])
-        else:
-            eval_df[model_label] = get_results(M, M_true, M_hat)
+
+def eval_on_model(model_label, i):
+    ix = ts.test_set_indices[i]
+    M = ts.test_set_missing[i]
+    start = time()
+    if model_label in parameters:
+        model = models[model_label](**parameters[model_label])
+    else:
+        model = models[model_label]()
+    if model_label=='Networks3DAlg2':
+        model.fit(ts.matrices_with_missing[:ix+1])
+    elif model_label=='TSMF' or model_label=='SES':
+        model.fit(ts.matrices_with_missing, ix)
+    else:
+        model.fit(M)
+    M_hat = model.predict()
+    logger.info("Evaluation completed on {}, took {}s".format(model_label,time()-start))
+    return M_hat
+
+for model_label in models:
+        mhats = Parallel(n_jobs=15,verbose=1)(delayed(eval_on_model)(model_label,i) for i in range(len(ts.test_set)))
+        for i in range(len(ts.test_set):
+            M_true = ts.test_set[i]
+            M = ts.test_set_missing[i]
+            M_hat = mhats[i]
+            mhats[i] = get_results(M, M_true, M_hat)
+        eval_df[model_label] = np.concatenate(mhats)
+
 
 eval_df = pd.DataFrame(eval_df)
 eval_df.to_csv('output/Accuracy/evaluation_run_{}.csv'.format(datetime.now().isoformat()))
