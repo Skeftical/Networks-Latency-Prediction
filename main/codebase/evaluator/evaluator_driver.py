@@ -23,12 +23,6 @@ parser.add_argument("test_size", help="Size of test set to evaluate models on", 
 parser.add_argument("missing_value_ratio", help='Ratio of missing values in matrices',type=float)
 args = parser.parse_args()
 
-if args.test_all_models:
-   print("Testing on all models")
-elif args.model_list:
-   for m in args.model_list:
-       print(m)
-
 logFormatter = logging.Formatter("[%(asctime)s] [%(levelname)-5.5s]  %(message)s")
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -69,6 +63,14 @@ models['Networks3D'] = Networks3D
 models['Networks3DAlg2'] = Networks3DAlg2
 models['TSMF'] = TSMF
 models['SES'] = SES
+if args.test_all_models:
+    logger.info("Testing on all models")
+elif args.model_list:
+    for m in models.keys():
+        if m not in args.model_list:
+            models.pop(m)
+
+
 eval_df = {}
 logger.info("Beginning evaluation on models :\n {}".format('\t'.join(models.keys())))
 for i in range(len(ts.test_set)):
