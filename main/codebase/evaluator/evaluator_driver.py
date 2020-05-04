@@ -21,6 +21,7 @@ parser.add_argument("--verbose", "-v", dest='verbosity', help="increase output v
 group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument('-a',"--all",dest="test_all_models", action="store_true", help="Test on all models")
 group.add_argument('-m','--models',dest='model_list', nargs='+', help='Models to evaluate')
+parser.add_argument('-p', '--processes', dest='processes', type=int)
 parser.add_argument("test_size", help="Size of test set to evaluate models on", type=int)
 parser.add_argument("missing_value_ratio", help='Ratio of missing values in matrices',type=float)
 args = parser.parse_args()
@@ -106,7 +107,7 @@ def eval_on_model(model_label, i):
     return M_hat
 
 for model_label in models:
-        mhats = Parallel(n_jobs=15,verbose=1)(delayed(eval_on_model)(model_label,i) for i in range(len(ts.test_set)))
+        mhats = Parallel(n_jobs=args.processes,verbose=1)(delayed(eval_on_model)(model_label,i) for i in range(len(ts.test_set)))
         for i in range(len(ts.test_set)):
             M_true = ts.test_set[i]
             M = ts.test_set_missing[i]
