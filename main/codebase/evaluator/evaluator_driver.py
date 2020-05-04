@@ -16,14 +16,14 @@ np.random.seed(5)
 parser = argparse.ArgumentParser()
 parser.add_argument("--verbose", "-v", dest='verbosity', help="increase output verbosity",
                     action="store_true")
-parser.add_argument('-a',"--all",dest="test_all_models", action="store_true", help="Test on all models")
+group = parser.add_mutually_exclusive_group(required=True)
+group.add_argument('-a',"--all",dest="test_all_models", action="store_true", help="Test on all models")
+group.add_argument('-m','--models',dest='model_list', nargs='*', help='Models to evaluate')
 parser.add_argument("test_size", help="Size of test set to evaluate models on", type=int)
 parser.add_argument("missing_value_ratio", help='Ratio of missing values in matrices',type=float)
-parser.add_argument('-m','--models',dest='model_list', nargs='*', help='Models to evaluate')
 args = parser.parse_args()
 
-if args.test_all_models is None and args.model_list is None:
-    print("Need to choose which models to evaluate on")
+
 logFormatter = logging.Formatter("[%(asctime)s] [%(levelname)-5.5s]  %(message)s")
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
