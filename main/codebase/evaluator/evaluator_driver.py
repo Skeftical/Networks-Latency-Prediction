@@ -63,10 +63,11 @@ models['Networks3D'] = Networks3D
 models['Networks3DAlg2'] = Networks3DAlg2
 models['TSMF'] = TSMF
 models['SES'] = SES
+models_set = list(models.keys())
 if args.test_all_models:
     logger.info("Testing on all models")
 elif args.model_list:
-    for m in models.keys():
+    for m in models_set:
         if m not in args.model_list:
             models.pop(m)
 
