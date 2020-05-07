@@ -31,6 +31,7 @@ class SES():
         past_matrices = matrices[ix-self.L:ix]
         past_history = np.array(past_matrices)
         ys_predicted = np.zeros(shape_of_matrix)
+        self.uncertainty_matrix = np.zeros(shape_of_matrix)
         iter_entries = list(product(range(shape_of_matrix[0]), range(shape_of_matrix[1])))
         impute_by_column = []
         for i,j in iter_entries:
@@ -45,13 +46,14 @@ class SES():
             m = SimpleExpSmoothing(d).fit(smoothing_level=self.smoothing_level,optimized=self.optimized)
             y_hat = float(m.forecast(1))
             ys_predicted[i,j] = y_hat
+            self.uncertainty_matrix[i,j] = np.std(m.resid)
 
         for i,j in impute_by_column:
             #Impute by both the column values and row columns
             ys_predicted[i,j] = np.mean(np.concatenate((ys_predicted[i,:], ys_predicted[:,j])))
 
         self.Mhat = ys_predicted
-
+    
     def predict(self):
         return self.Mhat
 
