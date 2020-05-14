@@ -10,6 +10,7 @@ from time import time
 from main.codebase.models.matrix_completion import SimpleMF
 from itertools import product
 from joblib import Parallel, delayed
+from pickle import dump
 np.random.seed(5)
 
 def product_dict(**kwargs):
@@ -86,7 +87,12 @@ for model_label in models:
 
     for e,p in errors_params:
         if e<best_score:
-            best_score = error
+            best_score = e
             best_params = p
+    best_params_df[model_label] = best_params
     logger.info("Hypertuning completed on {}, took {}s".format(model_label,time()-start))
     logger.info("Best Score : {}\nBest Parameters {}".format(best_score, '\t'.join(['({},{})'.format(label,val) for label, val in best_params.items()])))
+ids_of_matrices_used = ts.test_set_indices
+dump(ids_of_matrices_used, 'output/hypertuning/matrices_used.pkl')
+for k,v in best_params_df.items():
+    dump(v,'output/hypertuning/{}.pkl'.format(k))
