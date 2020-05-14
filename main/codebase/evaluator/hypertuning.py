@@ -93,6 +93,8 @@ for model_label in models:
     logger.info("Hypertuning completed on {}, took {}s".format(model_label,time()-start))
     logger.info("Best Score : {}\nBest Parameters {}".format(best_score, '\t'.join(['({},{})'.format(label,val) for label, val in best_params.items()])))
 ids_of_matrices_used = ts.test_set_indices
-dump(ids_of_matrices_used, 'output/hypertuning/matrices_used.pkl')
+with open('output/hypertuning/matrices_used.pkl', 'wb') as f:
+    dump(ids_of_matrices_used, f)
 for k,v in best_params_df.items():
-    dump(v,'output/hypertuning/{}.pkl'.format(k))
+    with open('output/hypertuning/{}.pkl'.format(k), 'wb') as f:
+        dump(v, f)
