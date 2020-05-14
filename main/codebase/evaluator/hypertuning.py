@@ -62,6 +62,7 @@ best_params_df = {}
 logger.info("Beginning hypertuning on models :\n {}".format('\t'.join(models.keys())))
 
 def evaluate_on_params(params, model_label):
+    errors = []
     for i in range(len(ts.test_set)):
         logger.info("Run {}/{}".format(i+1, len(ts.test_set)))
         ix = ts.test_set_indices[i]
