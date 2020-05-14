@@ -9,7 +9,7 @@ from datetime import datetime
 from time import time
 from main.codebase.models.matrix_completion import SimpleMF
 from itertools import product
-
+from joblib import Parallel, delayed
 np.random.seed(5)
 
 def product_dict(**kwargs):
@@ -61,27 +61,31 @@ models['SimpleMF'] = SimpleMF
 best_params_df = {}
 logger.info("Beginning hypertuning on models :\n {}".format('\t'.join(models.keys())))
 
+def evaluate_on_params(params, model_label):
+    for i in range(len(ts.test_set)):
+        logger.info("Run {}/{}".format(i+1, len(ts.test_set)))
+        ix = ts.test_set_indices[i]
+        logger.info("On matrix ID {}".format(ix))
+        M = ts.test_set_missing[i]
+        M_true = ts.test_set[i]
+        model = models[model_label](**params)
+        model.fit(M)
+        M_hat = model.predict()
+        M_hat = np.where(np.isnan(M), M_hat, M_true)
+        errors.append(loss(M_true, M_hat))
+    error = np.mean(errors)
+
+    return (error, params)
 
 for model_label in models:
     start = time()
     best_score = np.inf
     best_params = None
-    for params in product_dict(**hypertuned_models[model_label]):
-        errors = []
-        for i in range(len(ts.test_set)):
-            logger.info("Run {}/{}".format(i+1, len(ts.test_set)))
-            ix = ts.test_set_indices[i]
-            logger.info("On matrix ID {}".format(ix))
-            M = ts.test_set_missing[i]
-            M_true = ts.test_set[i]
-            model = models[model_label](**params)
-            model.fit(M)
-            M_hat = model.predict()
-            M_hat = np.where(np.isnan(M), M_hat, M_true)
-            errors.append(loss(M_true, M_hat))
-        error = np.mean(errors)
-        if error<best_score:
+    errors_params = Parallel(n_jobs=4,verbose=1)(delayed(evaluate_on_params)(params, model_label) for params in product_dict(**hypertuned_models[model_label]))
+
+    for e,p in errors_params:
+        if e<best_score:
             best_score = error
-            best_params = params
+            best_params = p
     logger.info("Hypertuning completed on {}, took {}s".format(model_label,time()-start))
     logger.info("Best Score : {}\nBest Parameters {}".format(best_score, '\t'.join(['({},{})'.format(label,val) for label, val in best_params.items()])))
