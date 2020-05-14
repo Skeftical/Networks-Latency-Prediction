@@ -69,7 +69,7 @@ for model_label in models:
     for params in product_dict(**hypertuned_models[model_label]):
         errors = []
         for i in range(len(ts.test_set)):
-            logger.info("Run {}/{}".format(i+1, args.test_size))
+            logger.info("Run {}/{}".format(i+1, len(ts.test_set)))
             ix = ts.test_set_indices[i]
             logger.info("On matrix ID {}".format(ix))
             M = ts.test_set_missing[i]
