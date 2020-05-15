@@ -7,7 +7,7 @@ import sys
 import pandas as pd
 from datetime import datetime
 from time import time
-from main.codebase.models.matrix_completion import SimpleMF
+from main.codebase.models.time_series import TSMF
 from itertools import product
 from joblib import Parallel, delayed
 from pickle import dump
@@ -27,9 +27,9 @@ parser.add_argument("--verbose", "-v", dest='verbosity', help="increase output v
                     action="store_true")
 
 hypertuned_models = {
-    'SimpleMF' : {'iterations': np.arange(10,100,50),
-                 'lambda_f':np.linspace(0,1,2), 'lambda_x': np.linspace(0,1,2),
-                 'rank' : np.arange(5,30,20), 'gamma': np.linspace(0.01, 0.1, 2)
+    'TSMF' : {'iterations': np.arange(10,100,20), 'alpha':np.linspace(0,1,4), 'smoothing_level': np.linspace(0,1,10),
+                 'lambda_f':np.linspace(0,1,10), 'lambda_x': np.linspace(0,1,10),
+                 'rank' : np.arange(5,30,5), 'gamma': np.linspace(0.01, 0.1, 10)
                  }
 }
 
@@ -57,7 +57,7 @@ logger.info("Loading Testing Set Generator")
 ts = TestingSetGenerator(missing_value_ratio=0.3, test_set_size=10, lags=10)
 
 models = {}
-models['SimpleMF'] = SimpleMF
+models['TSMF'] = TSMF
 
 best_params_df = {}
 logger.info("Beginning hypertuning on models :\n {}".format('\t'.join(models.keys())))
@@ -83,7 +83,7 @@ for model_label in models:
     start = time()
     best_score = np.inf
     best_params = None
-    errors_params = Parallel(n_jobs=4,verbose=1)(delayed(evaluate_on_params)(params, model_label) for params in product_dict(**hypertuned_models[model_label]))
+    errors_params = Parallel(n_jobs=6,verbose=1)(delayed(evaluate_on_params)(params, model_label) for params in product_dict(**hypertuned_models[model_label]))
 
     for e,p in errors_params:
         if e<best_score:
