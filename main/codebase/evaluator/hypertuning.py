@@ -71,7 +71,7 @@ def evaluate_on_params(params, model_label):
         M = ts.test_set_missing[i]
         M_true = ts.test_set[i]
         model = models[model_label](**params)
-        model.fit(M)
+        model.fit(ts.matrices_with_missing, ix)
         M_hat = model.predict()
         M_hat = np.where(np.isnan(M), M_hat, M_true)
         errors.append(loss(M_true, M_hat))
