@@ -3,6 +3,7 @@ from scipy.sparse.linalg import svds
 from scipy.sparse import spdiags,diags
 from scipy.linalg import svd
 from numpy.linalg import matrix_rank
+from sklearn.decomposition import NMF
 
 class SimpleMF():
 
@@ -207,4 +208,44 @@ class PenaltyDecomposition():
         self.eps = eps
         self.maxit = maxit
         for k,v in kwargs.items():
-            setattr(self, k, v)        
+            setattr(self, k, v)
+
+class SVDWrapper():
+
+    def fit(self, M):
+        approx = np.where(np.isnan(M), np.median(M[~np.isnan(M)]), M)
+        U,S,V = np.linalg.svd(approx)
+        U = U[:,:self.rank]
+        V = V[:self.rank,:]
+        Mhat_SVD = U@np.diag(S[:self.rank])@V
+        self.Mhat = Mhat_SVD
+        self.right_vectors = U
+        self.singular_vectors = S
+        self.left_vectors = V
+
+    def predict(self):
+        return self.Mhat`
+
+    def __init__(self,rank):
+        self.rank = rank
+        self.Mhat = None
+        self.singular_vectors = None
+        self.right_vectors = None
+        self.left_vectors = None
+
+class NMFWrapper():
+
+    def fit(self, M):
+        model = NMF(n_components=self.rank, init='random', random_state=0)
+        approx = np.where(np.isnan(M), np.mean(M[~np.isnan(M)]), M)
+
+        W = model.fit_transform(approx)
+        H = model.components_
+        self.Mhat = W@H
+
+    def predict(self):
+        return self.Mhat`
+
+    def __init__(self,rank):
+        self.rank = rank
+        self.Mhat = None

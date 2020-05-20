@@ -53,7 +53,7 @@ class SES():
             ys_predicted[i,j] = np.mean(np.concatenate((ys_predicted[i,:], ys_predicted[:,j])))
 
         self.Mhat = ys_predicted
-    
+
     def predict(self):
         return self.Mhat
 
@@ -92,3 +92,24 @@ class TSMF():
         self.ts = SES(lags=self.lags,smoothing_level=self.smoothing_level, optimized=self.optimized)
         self.Mhat_MF = None
         self.Mhat_TS = None
+
+class TSMFAbstract():
+
+    def fit(self, matrices, ix):
+        self.mf.fit(matrices[ix])
+        self.Mhat_MF = self.mf.predict()
+        self.ts.fit(matrices, ix)
+        self.Mhat_TS = self.ts.predict()
+    def predict(self):
+        return self.alpha*self.Mhat_MF + (1-self.alpha)*self.Mhat_TS
+
+    def __init__(self, MF, TS, alpha=0.5):
+        '''
+        The passed MF and TS components have to be wrapped in class that implements fit() and predict()
+        TS  : fit(list_of_past_matrices, ix), predict() -> return Mhat
+        MF : fit(matrix_with_missing), predict() -> return Mhat
+
+        '''
+        self.alpha = alpha
+        self.mf = MF
+        self.ts = TS
