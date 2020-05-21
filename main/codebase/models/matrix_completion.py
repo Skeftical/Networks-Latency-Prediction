@@ -214,14 +214,17 @@ class SVDWrapper():
 
     def fit(self, M):
         approx = np.where(np.isnan(M), np.median(M[~np.isnan(M)]), M)
-        U,S,V = np.linalg.svd(approx)
+        U,S,V = np.linalg.svd(approx) #this method returns the conjugate transpose of V
         U = U[:,:self.rank]
         V = V[:self.rank,:]
         Mhat_SVD = U@np.diag(S[:self.rank])@V
         self.Mhat = Mhat_SVD
-        self.right_vectors = U
+        self.left_vectors = U
         self.singular_vectors = S
-        self.left_vectors = V
+        self.right_vectors = V
+
+    def get_decomposition(self):
+        return self.left_vectors@np.diag(self.singular_vectors[:self.rank]), self.right_vectors
 
     def predict(self):
         return self.Mhat
@@ -242,6 +245,11 @@ class NMFWrapper():
         W = model.fit_transform(approx)
         H = model.components_
         self.Mhat = W@H
+        self.W = W
+        self.H = H
+
+    def get_decomposition(self):
+        return self.W, self.H
 
     def predict(self):
         return self.Mhat
