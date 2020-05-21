@@ -224,7 +224,7 @@ class SVDWrapper():
         self.left_vectors = V
 
     def predict(self):
-        return self.Mhat`
+        return self.Mhat
 
     def __init__(self,rank):
         self.rank = rank
@@ -244,7 +244,7 @@ class NMFWrapper():
         self.Mhat = W@H
 
     def predict(self):
-        return self.Mhat`
+        return self.Mhat
 
     def __init__(self,rank):
         self.rank = rank
