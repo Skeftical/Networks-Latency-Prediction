@@ -32,12 +32,16 @@ class TestingSetGenerator():
                 yield self.matrices[i],i
             i= (i+1)%len(self.matrices)
 
-    def load_matrices(self):
+    def load_matrices(self, fpath):
         self.matrices = []
-        for i in range(1,689):
-            f = "SeattleData_{}".format(i)
-            m = np.loadtxt('/home/fotis/DATA/NETWORKS/MATRIX/NetLatency-Data-master/Seattle/{}'.format(f),delimiter='\t')
+        dir = os.listdir(fpath)
+        fname = dir[0].split('_')[0]
+        no_files = len(dir)
+        for i in range(1,no_files+1):
+            f = "{}_{}".format(fname, i)
+            m = np.loadtxt('{}/{}'.format(fpath, f),delimiter='\t')
             self.matrices.append(m)
+
 
     def initialize_test_set(self):
         start = 0
@@ -48,11 +52,11 @@ class TestingSetGenerator():
         self.matrices_with_missing = list(map(lambda X: missing_values(X,self.missing_value_ratio),self.matrices))
         self.test_set_missing = [self.matrices_with_missing[i] for i in self.test_set_indices]
 
-    def __init__(self, choice='Seattle', missing_value_ratio=0.3, test_set_size=5, lags=None, hypertuning_set=None):
+    def __init__(self, fpath, missing_value_ratio=0.3, test_set_size=5, lags=None, hypertuning_set=None):
         '''
         args :
-            choice : str
-                The choice of the data set to load
+            fpath : str
+                File path to list of matrices. Matrices need to start with a name followed by the sequence number [1, N] eg. 'Seattle_1'
             missing_value_ratio : float
                 The ratio of missing values for each matrix in the test set
             test_set_size : int
@@ -71,5 +75,5 @@ class TestingSetGenerator():
         self.matrices_with_missing = None
         self.test_set_indices = None
 
-        self.load_matrices()
+        self.load_matrices(fpath)
         self.initialize_test_set()
