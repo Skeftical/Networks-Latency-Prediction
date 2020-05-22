@@ -4,7 +4,11 @@ import numpy as np
 
 class EvaluatorSetTest(unittest.TestCase):
     def setUp(self):
-        self.ts = TestingSetGenerator(missing_value_ratio=0.5, test_set_size=100, lags=10)
+        self.ts = TestingSetGenerator(fpath='/home/fotis/DATA/NETWORKS/MATRIX/NetLatency-Data-master/Seattle',missing_value_ratio=0.5, test_set_size=100, lags=10)
+
+    def test_loading_planetlab(self):
+        ts = TestingSetGenerator(fpath='/home/fotis/DATA/NETWORKS/MATRIX/NetLatency-Data-master/PlanetLab',missing_value_ratio=0.5, test_set_size=100, lags=10)
+
 
     def test_length_of_arrays(self):
         self.assertEqual(len(self.ts.test_set),100)
