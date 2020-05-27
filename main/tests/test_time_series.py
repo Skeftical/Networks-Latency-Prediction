@@ -6,7 +6,7 @@ import numpy as np
 
 class EvaluatorSetTest(unittest.TestCase):
     def setUp(self):
-        self.ts = TestingSetGenerator(missing_value_ratio=0.3, test_set_size=100, lags=10)
+        self.ts = TestingSetGenerator(fpath='/home/fotis/DATA/NETWORKS/MATRIX/NetLatency-Data-master/Seattle', missing_value_ratio=0.3, test_set_size=100, lags=10)
         self.ses = SES()
         self.tsmf = TSMF()
 

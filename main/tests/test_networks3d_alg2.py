@@ -5,7 +5,7 @@ import numpy as np
 
 class EvaluatorSetTest(unittest.TestCase):
     def setUp(self):
-        self.ts = TestingSetGenerator(missing_value_ratio=0.3, test_set_size=100, lags=10)
+        self.ts = TestingSetGenerator(fpath='/home/fotis/DATA/NETWORKS/MATRIX/NetLatency-Data-master/Seattle', missing_value_ratio=0.3, test_set_size=100, lags=10)
         self.N3D2 = Networks3DAlg2(max_iter=2, iters_vivaldi=2, maxit=5)
 
     def test_fit(self):
