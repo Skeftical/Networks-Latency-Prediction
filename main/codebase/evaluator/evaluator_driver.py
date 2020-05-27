@@ -121,7 +121,7 @@ for model_label in models:
             M = ts.test_set_missing[i]
             M_hat = mhats[i]
             mhats[i] = get_results(M, M_true, M_hat)
-            totals[i] = len(mhats[i])
+            totals.append(len(mhats[i]))
         eval_df[model_label] = np.concatenate(mhats)
 labels = []
 for i,ix in enumerate(ts.test_set_indices):
