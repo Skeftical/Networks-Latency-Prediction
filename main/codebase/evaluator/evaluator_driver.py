@@ -24,6 +24,7 @@ group.add_argument('-m','--models',dest='model_list', nargs='+', help='Models to
 parser.add_argument('-p', '--processes', dest='processes', type=int)
 parser.add_argument("test_size", help="Size of test set to evaluate models on", type=int)
 parser.add_argument("missing_value_ratio", help='Ratio of missing values in matrices',type=float)
+parser.add_argument("fpath", help='Path to matrices', type=str)
 args = parser.parse_args()
 
 logFormatter = logging.Formatter("[%(asctime)s] [%(levelname)-5.5s]  %(message)s")
