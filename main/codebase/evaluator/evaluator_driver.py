@@ -112,7 +112,7 @@ def eval_on_model(model_label, i):
     M_hat = model.predict()
     logger.info("Evaluation completed on {}, took {}s".format(model_label,time()-start))
     return M_hat
-
+totals = []
 for model_label in models:
         logger.info("Starting on model {}".format(model_label))
         mhats = Parallel(n_jobs=args.processes,verbose=1)(delayed(eval_on_model)(model_label,i) for i in range(len(ts.test_set)))
@@ -121,11 +121,16 @@ for model_label in models:
             M = ts.test_set_missing[i]
             M_hat = mhats[i]
             mhats[i] = get_results(M, M_true, M_hat)
+            totals[i] = len(mhats[i])
         eval_df[model_label] = np.concatenate(mhats)
-
+labels = []
+for i,ix in enumerate(ts.test_set_indices):
+    label = ['matrixid-{}'.format(ix) for _ in range(totals[i])]
+    labels+= label
+eval_df['label'] = labels
 
 eval_df = pd.DataFrame(eval_df)
-eval_df.to_csv('output/Accuracy/evaluation_run_{}-{}-{}.csv'.format(datetime.now().isoformat(),args.test_size, args.missing_value_ratio))
+eval_df.to_csv('output/Accuracy/evaluation_run_{}-{}-{}-{}.csv'.format(datetime.now().isoformat(),args.test_size, args.missing_value_ratio,args.fpath.split('/')[-2]))
 print(eval_df)
 for k,v in parameters.items():
     logger.info("Model {}\nParameters:\n{}".format(k,'\n'.join(['{}\t{}'.format(label,val) for label, val in v.items()])))
