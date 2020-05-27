@@ -1,6 +1,7 @@
 import unittest
 from main.codebase.evaluator.testing_set_generator import TestingSetGenerator
-from main.codebase.models.time_series import SES, TSMF
+from main.codebase.models.time_series import SES, TSMF, TSMFAbstract
+from main.codebase.models.matrix_completion import  NMFWrapper, SVDWrapper
 import numpy as np
 
 class EvaluatorSetTest(unittest.TestCase):
@@ -30,6 +31,14 @@ class EvaluatorSetTest(unittest.TestCase):
         self.assertEqual(tsmf.lambda_x, d['lambda_x'])
         self.assertEqual(tsmf.rank, d['rank'])
         self.assertEqual(tsmf.gamma, d['gamma'])
+
+    def test_tsmf_abstract(self):
+        nmf = NMFWrapper(rank=10)
+        svd = SVDWrapper(rank=10)
+        tsmfabs = TSMFAbstract(nmf,ses)
+        tsmfabs.fit(self.ts.matrices_with_missing, self.ts.test_set_indices[0])
+        tsmfabs = TSMFAbstract(svd,ses)
+        tsmfabs.fit(self.ts.matrices_with_missing, self.ts.test_set_indices[0])
 
 if __name__ == '__main__':
     unittest.main()

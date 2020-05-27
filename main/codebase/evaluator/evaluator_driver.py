@@ -1,9 +1,9 @@
 import numpy as np
 from .testing_set_generator import TestingSetGenerator
 from main.codebase.models.euclidean import Vivaldi
-from main.codebase.models.matrix_completion import SimpleMF, PenaltyDecomposition
+from main.codebase.models.matrix_completion import SimpleMF, PenaltyDecomposition, NMFWrapper, SVDWrapper
 from main.codebase.models.networks3d import Networks3D, Networks3DAlg2
-from main.codebase.models.time_series import SES, TSMF
+from main.codebase.models.time_series import SES, TSMF, TSMFAbstract
 from .config import *
 import argparse
 import logging
@@ -62,10 +62,14 @@ models = {}
 models['SimpleMF'] = SimpleMF
 models['Vivaldi'] = Vivaldi
 models['PenaltyDecomposition'] = PenaltyDecomposition
-models['Networks3D'] = Networks3D
-models['Networks3DAlg2'] = Networks3DAlg2
+# models['Networks3D'] = Networks3D
+# models['Networks3DAlg2'] = Networks3DAlg2
 models['TSMF'] = TSMF
 models['SES'] = SES
+models['SVD'] = SVDWrapper(rank=10)
+models['NMF'] = NMFWrapper(rank=10)
+models['TSMF-SVD'] = TSMFAbstract(models['SVD'],SES(**parameters['SES']))
+models['TSMF-NMF'] = TSMFAbstract(models['NMF'],SES(**parameters['SES']))
 models_set = list(models.keys())
 if args.test_all_models:
     logger.info("Testing on all models")
