@@ -14,8 +14,8 @@ class SimpleMF():
         m = M.shape[1] # size of columns
         n = M.shape[0] # size of rows
 
-        self.X = np.random.uniform(size=(self.k,n))
-        self.F = np.random.uniform(size=(m, self.k))
+        self.X = np.random.uniform(size=(self.k,m))
+        self.F = np.random.uniform(size=(n, self.k))
 
         losses = []
         ix1, ix2 = (~np.isnan(M)).nonzero()
