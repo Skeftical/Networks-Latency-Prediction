@@ -35,9 +35,9 @@ class EvaluatorSetTest(unittest.TestCase):
     def test_tsmf_abstract(self):
         nmf = NMFWrapper(rank=10)
         svd = SVDWrapper(rank=10)
-        tsmfabs = TSMFAbstract(nmf,ses)
+        tsmfabs = TSMFAbstract(nmf,self.ses)
         tsmfabs.fit(self.ts.matrices_with_missing, self.ts.test_set_indices[0])
-        tsmfabs = TSMFAbstract(svd,ses)
+        tsmfabs = TSMFAbstract(svd,self.ses)
         tsmfabs.fit(self.ts.matrices_with_missing, self.ts.test_set_indices[0])
 
 if __name__ == '__main__':
