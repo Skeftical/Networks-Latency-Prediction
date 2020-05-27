@@ -105,7 +105,7 @@ def eval_on_model(model_label, i):
         model = models[model_label]
     if model_label=='Networks3DAlg2':
         model.fit(ts.matrices_with_missing[:ix+1])
-    elif model_label=='TSMF' or model_label=='SES':
+    elif model_label in ['TSMF', 'SES', 'TSMF-SVD', 'TSMF-NMF']:
         model.fit(ts.matrices_with_missing, ix)
     else:
         model.fit(M)
