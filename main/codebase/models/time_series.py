@@ -57,6 +57,10 @@ class SES():
     def predict(self):
         return self.Mhat
 
+    def forecast(self, matrices, ix):
+        self.fit(matrices, ix)
+        return self.predict()
+
     def __init__(self, lags=5, smoothing_level=0.2, optimized=False, **kwargs):
         self.smoothing_level = smoothing_level
         self.optimized = optimized
@@ -74,6 +78,14 @@ class TSMF():
         self.Mhat_TS = self.ts.predict()
     def predict(self):
         return self.alpha*self.Mhat_MF + (1-self.alpha)*self.Mhat_TS
+
+    def forecast(self, matrices, ix):
+        self.mf.fit(matrices[ix-1])
+        self.Mhat_MF = self.mf.predict()
+        self.ts.fit(matrices, ix)
+        self.Mhat_TS = self.ts.predict()
+        return self.alpha*self.Mhat_MF + (1-self.alpha)*self.Mhat_TS
+
 
     def __init__(self, alpha=0.5, lags=5, smoothing_level=0.2, optimized=False,
                     iterations=10,lambda_f=0.5, lambda_x=0.5, rank=10, gamma=0.01, **kwargs):
@@ -101,6 +113,13 @@ class TSMFAbstract():
         self.ts.fit(matrices, ix)
         self.Mhat_TS = self.ts.predict()
     def predict(self):
+        return self.alpha*self.Mhat_MF + (1-self.alpha)*self.Mhat_TS
+
+    def forecast(self, matrices, ix):
+        self.mf.fit(matrices[ix-1])
+        self.Mhat_MF = self.mf.predict()
+        self.ts.fit(matrices, ix)
+        self.Mhat_TS = self.ts.predict()
         return self.alpha*self.Mhat_MF + (1-self.alpha)*self.Mhat_TS
 
     def __init__(self, MF, TS, alpha=0.5):
