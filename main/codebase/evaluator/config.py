@@ -6,7 +6,7 @@ pd_params = {'tau':10, 'l':0.001, 'u':1, 'eps':1e-3, 'maxit':np.inf}
 networks3d_params = {'max_iter':3, 'd_vivaldi':3, 'gamma_vivaldi':0.01, 'iters_vivaldi':50,
                 'tau':10, 'l':0.001, 'u':1, 'eps':1e-3, 'maxit':np.inf}
 tsmf_params = {'alpha':0.5, 'lags':LAGS, 'smoothing_level':0.2, 'optimized':False,
-                        'iterations':10,'lambda_f':0.5, 'lambda_x':0.5, 'rank':10, 'gamma':0.01}
+                        'iterations':10,'lambda_f':0.8, 'lambda_x':0.8, 'rank':10, 'gamma':0.001}
 ses_params = {'smoothing_level': 0.2, 'optimized': False, 'lags':LAGS}
 parameters = {}
 parameters['SimpleMF'] = simple_MF_params

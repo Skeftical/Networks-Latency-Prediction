@@ -5,6 +5,7 @@ from main.codebase.models.matrix_completion import SimpleMF, PenaltyDecompositio
 from main.codebase.models.networks3d import Networks3D, Networks3DAlg2
 from main.codebase.models.time_series import SES, TSMF, TSMFAbstract
 from .config import *
+from functools import reduce
 import argparse
 import logging
 import os
@@ -56,21 +57,22 @@ def get_results(M, M_true, M_hat):
     y_hat = M_hat[np.isnan(M)]
     y_test = M_true[np.isnan(M)]
     y_hat = y_hat[y_test.nonzero()] #zero values crash relative error calculation
-    return y_hat
+    rows_of_nan_entries = np.where( (np.isnan(M)) & (M!=0) )[0]
+    return y_hat, rows_of_nan_entries
 
 
 models = {}
-models['SimpleMF'] = SimpleMF
-models['Vivaldi'] = Vivaldi
-models['PenaltyDecomposition'] = PenaltyDecomposition
+# models['SimpleMF'] = SimpleMF
+# models['Vivaldi'] = Vivaldi
+# models['PenaltyDecomposition'] = PenaltyDecomposition
 # models['Networks3D'] = Networks3D
 # models['Networks3DAlg2'] = Networks3DAlg2
-models['TSMF'] = TSMF
+# models['TSMF'] = TSMF
 models['SES'] = SES
-models['SVD'] = SVDWrapper(rank=10)
-models['NMF'] = NMFWrapper(rank=10)
-models['TSMF-SVD'] = TSMFAbstract(models['SVD'],SES(**parameters['SES']))
-models['TSMF-NMF'] = TSMFAbstract(models['NMF'],SES(**parameters['SES']))
+# models['SVD'] = SVDWrapper(rank=10)
+# models['NMF'] = NMFWrapper(rank=10)
+# models['TSMF-SVD'] = TSMFAbstract(models['SVD'],SES(**parameters['SES']))
+# models['TSMF-NMF'] = TSMFAbstract(models['NMF'],SES(**parameters['SES']))
 models_set = list(models.keys())
 if args.test_all_models:
     logger.info("Testing on all models")
@@ -113,6 +115,7 @@ def eval_on_model(model_label, i):
     logger.info("Evaluation completed on {}, took {}s".format(model_label,time()-start))
     return M_hat
 totals = []
+users = []
 for model_label in models:
         logger.info("Starting on model {}".format(model_label))
         mhats = Parallel(n_jobs=args.processes,verbose=1)(delayed(eval_on_model)(model_label,i) for i in range(len(ts.test_set)))
@@ -120,7 +123,8 @@ for model_label in models:
             M_true = ts.test_set[i]
             M = ts.test_set_missing[i]
             M_hat = mhats[i]
-            mhats[i] = get_results(M, M_true, M_hat)
+            mhats[i],rows = get_results(M, M_true, M_hat)
+            users.append(rows)
             totals.append(len(mhats[i]))
         eval_df[model_label] = np.concatenate(mhats)
 labels = []
@@ -128,6 +132,7 @@ for i,ix in enumerate(ts.test_set_indices):
     label = ['matrixid-{}'.format(ix) for _ in range(totals[i])]
     labels+= label
 eval_df['label'] = labels
+eval_df['user'] = reduce(lambda l1,l2 : l1+l2, users)
 
 eval_df = pd.DataFrame(eval_df)
 eval_df.to_csv('output/Accuracy/evaluation_run_{}-{}-{}-{}.csv'.format(datetime.now().isoformat(),args.test_size, args.missing_value_ratio,args.fpath.split('/')[-2]))
