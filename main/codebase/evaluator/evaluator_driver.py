@@ -58,6 +58,7 @@ def get_results(M, M_true, M_hat):
     y_test = M_true[np.isnan(M)]
     y_hat = y_hat[y_test.nonzero()] #zero values crash relative error calculation
     rows_of_nan_entries = np.where( (np.isnan(M)) & (M!=0) )[0]
+    assert y_hat.shape[0] == rows_of_nan_entries.shape[0]
     return y_hat, rows_of_nan_entries
 
 
