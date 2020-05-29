@@ -25,7 +25,7 @@ class SimpleMF():
                 ei = M[i,t] - np.dot(self.F[i,:], self.X[:,t])
                 self.F[i,:]+=self.gamma*(ei*self.X[:,t]-self.lambda_f*self.F[i,:])
                 self.X[:,t]+=self.gamma*(ei*self.F[i,:]-self.lambda_x*self.X[:,t])
-            loss = np.linalg.norm(M[ix1,ix2] - np.dot(self.F,self.X)[ix1,ix2],ord='fro') # loss with random matrices
+            loss = np.linalg.norm(M[ix1,ix2] - np.dot(self.F,self.X)[ix1,ix2]) # loss with random matrices
             losses.append(loss)
 
         self.losses = losses
