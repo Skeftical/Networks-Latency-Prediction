@@ -132,7 +132,7 @@ for i,ix in enumerate(ts.test_set_indices):
     label = ['matrixid-{}'.format(ix) for _ in range(totals[i])]
     labels+= label
 eval_df['label'] = labels
-eval_df['user'] = reduce(lambda l1,l2 : l1+l2, users)
+eval_df['user'] = np.concatenate(users)
 
 eval_df = pd.DataFrame(eval_df)
 eval_df.to_csv('output/Accuracy/evaluation_run_{}-{}-{}-{}.csv'.format(datetime.now().isoformat(),args.test_size, args.missing_value_ratio,args.fpath.split('/')[-2]))
