@@ -117,8 +117,9 @@ def eval_on_model(model_label, i):
     return M_hat
 totals = []
 users = []
+INIT = True
+
 for model_label in models:
-        INIT = True
         logger.info("Starting on model {}".format(model_label))
         mhats = Parallel(n_jobs=args.processes,verbose=1)(delayed(eval_on_model)(model_label,i) for i in range(len(ts.test_set)))
         for i in range(len(ts.test_set)):
