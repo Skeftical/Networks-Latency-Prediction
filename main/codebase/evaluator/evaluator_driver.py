@@ -63,17 +63,17 @@ def get_results(M, M_true, M_hat):
 
 
 models = {}
-# models['SimpleMF'] = SimpleMF
+models['SimpleMF'] = SimpleMF
 # models['Vivaldi'] = Vivaldi
 # models['PenaltyDecomposition'] = PenaltyDecomposition
 # models['Networks3D'] = Networks3D
 # models['Networks3DAlg2'] = Networks3DAlg2
-# models['TSMF'] = TSMF
+models['TSMF'] = TSMF
 models['SES'] = SES
-# models['SVD'] = SVDWrapper(rank=10)
-# models['NMF'] = NMFWrapper(rank=10)
-# models['TSMF-SVD'] = TSMFAbstract(models['SVD'],SES(**parameters['SES']))
-# models['TSMF-NMF'] = TSMFAbstract(models['NMF'],SES(**parameters['SES']))
+models['SVD'] = SVDWrapper(rank=10)
+models['NMF'] = NMFWrapper(rank=10)
+models['TSMF-SVD'] = TSMFAbstract(models['SVD'],SES(**parameters['SES']))
+models['TSMF-NMF'] = TSMFAbstract(models['NMF'],SES(**parameters['SES']))
 models_set = list(models.keys())
 if args.test_all_models:
     logger.info("Testing on all models")
