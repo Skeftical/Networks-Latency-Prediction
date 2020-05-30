@@ -118,6 +118,7 @@ def eval_on_model(model_label, i):
 totals = []
 users = []
 for model_label in models:
+        INIT = True
         logger.info("Starting on model {}".format(model_label))
         mhats = Parallel(n_jobs=args.processes,verbose=1)(delayed(eval_on_model)(model_label,i) for i in range(len(ts.test_set)))
         for i in range(len(ts.test_set)):
@@ -125,8 +126,10 @@ for model_label in models:
             M = ts.test_set_missing[i]
             M_hat = mhats[i]
             mhats[i],rows = get_results(M, M_true, M_hat)
-            users.append(rows)
-            totals.append(len(mhats[i]))
+            if INIT:
+                users.append(rows)
+                totals.append(len(mhats[i]))
+        INIT = False
         eval_df[model_label] = np.concatenate(mhats)
 labels = []
 for i,ix in enumerate(ts.test_set_indices):
