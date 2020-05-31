@@ -90,11 +90,21 @@ def eval_on_model(model_label, i):
     logger.info("Evaluation completed on {}, took {}s".format(model_label,time()-start))
     return M_hat.flatten()
 
+totals = []
+INIT = True
+
 for model_label in models:
         logger.info("Starting on model {}".format(model_label))
         mhats = Parallel(n_jobs=args.processes,verbose=1)(delayed(eval_on_model)(model_label,i) for i in range(len(ts.test_set)))
         eval_df[model_label] = np.concatenate(mhats)
-
+        if INIT:
+            totals.append(len(mhats[i]))
+        INIT = False
+labels = []
+for i,ix in enumerate(ts.test_set_indices):
+    label = ['matrixid-{}'.format(ix) for _ in range(totals[i])]
+    labels+= label
+eval_df['label'] = labels
 
 eval_df = pd.DataFrame(eval_df)
 eval_df.to_csv('output/Accuracy/forecasting_run_{}-{}-{}-{}.csv'.format(datetime.now().isoformat(),args.test_size, args.missing_value_ratio,args.fpath.split('/')[-2]))
