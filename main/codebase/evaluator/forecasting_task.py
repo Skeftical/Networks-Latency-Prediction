@@ -98,7 +98,8 @@ for model_label in models:
         mhats = Parallel(n_jobs=args.processes,verbose=1)(delayed(eval_on_model)(model_label,i) for i in range(len(ts.test_set)))
         eval_df[model_label] = np.concatenate(mhats)
         if INIT:
-            totals.append(len(mhats[i]))
+            for m in mhats:
+                totals.append(len(m))
         INIT = False
 labels = []
 for i,ix in enumerate(ts.test_set_indices):
