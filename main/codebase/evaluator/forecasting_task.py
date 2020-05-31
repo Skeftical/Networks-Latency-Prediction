@@ -88,7 +88,7 @@ def eval_on_model(model_label, i):
 
     M_hat = model.forecast(ts.matrices_with_missing, ix)
     logger.info("Evaluation completed on {}, took {}s".format(model_label,time()-start))
-    return M_hat
+    return M_hat.flatten()
 
 for model_label in models:
         logger.info("Starting on model {}".format(model_label))
