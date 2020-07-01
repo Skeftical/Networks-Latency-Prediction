@@ -157,7 +157,7 @@ class TSMFV2(TSMF):
         self.Mhat_MF = self.__mf_fit(matrices[ix])
 
     def predict(self):
-        super().predict()
+        return super().predict()
 
     def forecast(self, matrices, ix):
         self.ts.fit(matrices, ix)
