@@ -132,3 +132,53 @@ class TSMFAbstract():
         self.alpha = alpha
         self.mf = MF
         self.ts = TS
+
+class TSMFV2(TSMF):
+
+    def __mf_fit(self, M):
+        m = M.shape[1] # size of columns
+        n = M.shape[0] # size of rows
+
+        X = np.random.uniform(size=(self.rank,m))
+        F = np.random.uniform(size=(n, self.rank))
+        M_ts = self.ts.predict()
+        ix1, ix2 = (~np.isnan(M)).nonzero()
+        for _ in range(self.iterations):
+            Omega = zip(ix1, ix2)
+            for i,t in Omega:
+                ei = M[i,t] - (self.alpha*np.dot(F[i,:], X[:,t]) + (1-self.alpha)*M_ts[i,t])
+                F[i,:]+=self.gamma*(ei*X[:,t]-self.lambda_f*F[i,:])
+                X[:,t]+=self.gamma*(ei*F[i,:]-self.lambda_x*X[:,t])
+        return np.dot(self.F, self.X)
+
+    def fit(self, matrices, ix):
+        self.ts.fit(matrices, ix)
+        self.Mhat_TS = self.ts.predict()
+        self.Mhat_MF = self.__mf_fit(matrices[ix])
+
+    def predict(self):
+        super().predict()
+
+    def forecast(self, matrices, ix):
+        self.ts.fit(matrices, ix)
+        self.Mhat_TS = self.ts.predict()
+        self.Mhat_MF = self.__mf_fit(matrices[ix-1])
+        return self.alpha*self.Mhat_MF + (1-self.alpha)*self.Mhat_TS
+
+
+    def __init__(self, alpha=0.5, lags=5, smoothing_level=0.2, optimized=False,
+                    iterations=10,lambda_f=0.5, lambda_x=0.5, rank=10, gamma=0.01, **kwargs):
+        self.alpha = alpha
+        self.lags = lags
+        self.smoothing_level = smoothing_level
+        self.optimized = optimized
+        self.iterations = iterations
+        self.lambda_f = lambda_f
+        self.lambda_x = lambda_x
+        self.rank = rank
+        self.gamma = gamma
+        for k,v in kwargs:
+            setattr(self, k, v)
+        self.ts = SES(lags=self.lags,smoothing_level=self.smoothing_level, optimized=self.optimized)
+        self.Mhat_MF = None
+        self.Mhat_TS = None
