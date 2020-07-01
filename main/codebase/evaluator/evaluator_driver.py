@@ -3,7 +3,7 @@ from .testing_set_generator import TestingSetGenerator
 from main.codebase.models.euclidean import Vivaldi
 from main.codebase.models.matrix_completion import SimpleMF, PenaltyDecomposition, NMFWrapper, SVDWrapper
 from main.codebase.models.networks3d import Networks3D, Networks3DAlg2
-from main.codebase.models.time_series import SES, TSMF, TSMFAbstract
+from main.codebase.models.time_series import SES, TSMF, TSMFAbstract,TSMFV2
 from .config import *
 from functools import reduce
 import argparse
@@ -69,6 +69,7 @@ models['SimpleMF'] = SimpleMF
 # models['Networks3D'] = Networks3D
 # models['Networks3DAlg2'] = Networks3DAlg2
 models['TSMF'] = TSMF
+models['TSMFV2'] = TSMFV2
 models['SES'] = SES
 models['SVD'] = SVDWrapper(rank=10)
 models['NMF'] = NMFWrapper(rank=10)
