@@ -149,7 +149,7 @@ class TSMFV2(TSMF):
                 ei = M[i,t] - (self.alpha*np.dot(F[i,:], X[:,t]) + (1-self.alpha)*M_ts[i,t])
                 F[i,:]+=self.gamma*(ei*X[:,t]-self.lambda_f*F[i,:])
                 X[:,t]+=self.gamma*(ei*F[i,:]-self.lambda_x*X[:,t])
-        return np.dot(self.F, self.X)
+        return np.dot(F, X)
 
     def fit(self, matrices, ix):
         self.ts.fit(matrices, ix)
