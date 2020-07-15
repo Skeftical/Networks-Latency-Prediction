@@ -26,7 +26,7 @@ sensitivity = {'lags': np.arange(5,15,5), 'alpha':np.linspace(0,1,3),
 
 args = parser.parse_args()
 
-logFormatter = logging.Formatter("[%(asctime)s] [%(levelname)-5.5s]  %(message)s")
+logFormatter = logging.Formatter("[%(asctime)s] %(threadName)s  %(message)s")
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 logPath = 'output/logs'
@@ -45,16 +45,17 @@ if args.verbosity:
    logger.addHandler(handler)
 
 def evaluate_on_param(param, val):
+    logging.basicConfig(level=logging.INFO, format='%(relativeCreated)6d %(threadName)s %(message)s')
     errors = []
     for i in range(len(ts.test_set)):
-        logger.info("Run {}/{}".format(i+1, len(ts.test_set)))
+        logging.info("Run {}/{}".format(i+1, len(ts.test_set)))
         ix = ts.test_set_indices[i]
-        logger.info("On matrix ID {}".format(ix))
+        logging.info("On matrix ID {}".format(ix))
         M = ts.test_set_missing[i]
         M_true = ts.test_set[i]
         if param=='lags':
             parameters['TSMF']['lags'] = val
-        for _ in range(10):
+        for _ in range(3):
             model = TSMF(**parameters['TSMF'])
             model.fit(ts.matrices_with_missing, ix)
             M_hat = model.predict()
