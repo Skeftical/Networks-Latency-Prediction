@@ -53,8 +53,7 @@ def evaluate_on_param(param, val):
         logging.info("On matrix ID {}".format(ix))
         M = ts.test_set_missing[i]
         M_true = ts.test_set[i]
-        if param=='lags':
-            parameters['TSMF']['lags'] = val
+        parameters['TSMF'][param] = val
         for _ in range(3):
             model = TSMF(**parameters['TSMF'])
             model.fit(ts.matrices_with_missing, ix)
