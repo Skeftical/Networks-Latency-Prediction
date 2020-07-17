@@ -20,8 +20,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--verbose", "-v", dest='verbosity', help="increase output verbosity",
                     action="store_true")
 
-sensitivity = {'lags': np.arange(5,15,5), 'alpha':np.linspace(0,1,3),
-                 'rank' : np.arange(5,15,5)
+sensitivity = {'lags': np.arange(5,50,10), 'alpha':np.linspace(0,1,10),
+                 'rank' : np.arange(5,40,5)
             }
 
 args = parser.parse_args()
@@ -55,7 +55,7 @@ def evaluate_on_param(param, val):
         M_true = ts.test_set[i]
         if param=='lags':
             parameters['TSMF']['lags'] = val
-        for _ in range(3):
+        for _ in range(10):
             model = TSMF(**parameters['TSMF'])
             model.fit(ts.matrices_with_missing, ix)
             M_hat = model.predict()
@@ -76,10 +76,11 @@ for param,vals in sensitivity.items():
         lag = np.max(vals)
     ts = TestingSetGenerator('/home/fotis/DATA/NETWORKS/MATRIX/NetLatency-Data-master/Seattle',missing_value_ratio=0.3, test_set_size=10, lags=lag)
     oerrors = Parallel(n_jobs=4,verbose=1)(delayed(evaluate_on_param)(param,val) for val in vals)
+    l = len(oerrors[0])
     noerrors = np.concatenate(oerrors)
     eval_df['error']+= noerrors.tolist()
     eval_df['parameter']+= [param for _ in range(noerrors.shape[0])]
-    eval_df['val'] += [vals[i/vals.shape[0]] for i in range(noerrors.shape[0])]
+    eval_df['val'] += [vals[i//l] for i in range(noerrors.shape[0])]
 
 eval_df = pd.DataFrame(eval_df)
 eval_df.to_csv('output/Sensitivity/sensitivity.csv')
