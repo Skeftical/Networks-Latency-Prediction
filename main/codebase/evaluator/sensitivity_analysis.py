@@ -21,7 +21,7 @@ parser.add_argument("--verbose", "-v", dest='verbosity', help="increase output v
                     action="store_true")
 
 sensitivity = {'lags': np.arange(5,50,10), 'alpha':np.linspace(0,1,10),
-                 'rank' : np.arange(5,40,5)
+                 'rank' : np.arange(5,40,5), 'smoothing_level' : np.linspace(0.1, 0.95, 10)
             }
 
 args = parser.parse_args()
